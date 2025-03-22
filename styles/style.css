@@ -1,0 +1,71 @@
+.pin-button-tooltip {
+    display: none;
+    position: absolute;
+    background: #212121;
+    box-shadow: #212121 -1rem 0 1.5rem;
+    right: 1.7rem;
+    padding: 0.3rem;
+    z-index: 1000;
+}
+
+.active {
+    background-color: #34d3990f !important;
+}
+
+.active div[title] {
+    color: #34d399 !important;
+    font-weight: 500;
+}
+
+.unpin-button-tooltip {
+    display: none;
+    position: absolute;
+    box-shadow: #212121 -1rem 0 1.5rem;
+    padding: 0.3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 8px;
+}
+
+.unpin-button-tooltip .unpin-icon,
+.pin-button-tooltip .pin-icon {
+    width: 15px;
+    aspect-ratio: 1;
+    cursor: pointer;
+}
+
+.unpin-button-tooltip:hover .unpin-icon,
+.unpin-button-tooltip:hover .unpin-icon * {
+    fill: red;
+}
+
+.pin-button-tooltip:hover .unpin-icon,
+.pin-button-tooltip:hover .pin-icon * {
+    fill: #34d399;
+}
+
+.unpin-icon,
+.unpin-icon * {
+    fill: #ffffff;
+}
+
+.pin-icon,
+.pin-icon * {
+    fill: #ffffff;
+}
+
+li[data-testid^="history"] {
+    & > div:has(:hover) .pin-button-tooltip {
+        display: block;
+    }
+
+    &:hover {
+        .unpin-button-tooltip {
+            display: block;
+        }
+    }
+}
+
+li[data-testid^="history"] a:not([href]) {
+    cursor: pointer;
+}
