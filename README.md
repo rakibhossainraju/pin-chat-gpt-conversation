@@ -1,99 +1,140 @@
 # ChatGPT Pin Conversation Extension
 
-A Chrome extension that enhances ChatGPT's interface by allowing users to pin important conversations for quick access. This extension adds a pinning system to ChatGPT's sidebar, making it easier to organize and access frequently used conversations.
+A Chrome extension that allows you to pin important ChatGPT conversations for quick access.
 
 ## Features
 
-- **Pin Conversations**: Pin important conversations to keep them easily accessible
-- **Pinned Section**: Dedicated section in the sidebar for pinned conversations
-- **Quick Navigation**: Direct access to pinned conversations
-- **Persistent Storage**: Pinned conversations persist across sessions
-- **Visual Indicators**: Clear visual feedback for pinned and active conversations
-- **Hover Actions**: Pin/unpin functionality available on hover over conversations
+- Pin/unpin ChatGPT conversations
+- Pinned conversations appear at the top of the sidebar
+- Quick navigation to pinned conversations
+- Persistent storage of pinned conversations
+- Modern and intuitive UI
+- Efficient DOM operations and event handling
+- Robust error handling
+
+## Architecture
+
+The extension is built with a modular architecture using modern JavaScript practices:
+
+### Core Services
+
+1. **ChatHistoryUI**
+    - Manages the UI for pinned conversations
+    - Handles user interactions and visual updates
+    - Integrates with storage and event management
+
+2. **ChatHistoryStorage**
+    - Manages persistent storage of pinned conversations
+    - Handles data validation and integrity
+    - Uses Chrome's storage API
+
+3. **URLTracker**
+    - Monitors URL changes for conversation navigation
+    - Handles URL validation and pattern matching
+    - Manages navigation state
+
+4. **EventManager**
+    - Centralized event handling system
+    - Custom event types for better communication
+    - Event cleanup and resource management
+
+5. **DOMUtils**
+    - Utility class for DOM operations
+    - Efficient element creation and manipulation
+    - Non-blocking element observation
+    - Consistent DOM interaction patterns
+
+### Error Handling
+
+The extension implements a robust error handling system:
+
+- Custom error classes for different scenarios:
+    - `ExtensionError`: Base error class
+    - `StorageError`: Storage-related errors
+    - `DOMError`: DOM manipulation errors
+    - `ValidationError`: Data validation errors
+    - `URLError`: URL-related errors
+
+### Configuration
+
+Centralized configuration management:
+
+- UI constants and selectors
+- Timeout values
+- Error messages
+- CSS classes and styles
 
 ## Installation
 
-1. Clone this repository or download the source code
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode" in the top right corner
+1. Clone this repository
+2. Open Chrome and go to `chrome://extensions/`
+3. Enable "Developer mode"
 4. Click "Load unpacked" and select the extension directory
 
 ## Usage
 
-1. Navigate to ChatGPT in your browser
-2. Hover over any conversation in the sidebar to reveal the pin button
-3. Click the pin button to pin a conversation
-4. Pinned conversations will appear in a dedicated "Pinned Conversations" section at the top of the sidebar
-5. Click the unpin button on a pinned conversation to remove it from the pinned section
-
-## Project Structure
-
-```
-├── scripts/
-│   ├── services/
-│   │   ├── ChatHistoryUI.js      # Main UI management class
-│   │   ├── ChatHistoryStorage.js # Local storage management
-│   │   ├── DocumentManager.js    # DOM manipulation utilities
-│   │   ├── URLTracker.js         # URL change tracking
-│   │   └── icons.js              # SVG icons for pin/unpin buttons
-│   ├── content.js                # Main content script
-│   └── content-loader.js         # Dynamic content script loader
-├── styles/
-│   └── style.css                 # Extension styles
-└── manifest.json                 # Extension configuration
-```
-
-## Technical Details
-
-### Core Components
-
-#### ChatHistoryUI
-- Manages the UI elements and interactions
-- Handles pin/unpin button creation and placement
-- Manages the pinned conversations section
-- Tracks active conversations
-
-#### ChatHistoryStorage
-- Manages local storage operations
-- Handles persistence of pinned conversations
-- Provides methods for pin/unpin operations
-
-#### DocumentManager
-- Provides DOM manipulation utilities
-- Handles element creation and modification
-- Manages style injection
-
-#### URLTracker
-- Monitors URL changes in the ChatGPT interface
-- Triggers UI updates when conversations change
-- Ensures proper active state management
-
-### Implementation Details
-
-- Uses Chrome's extension APIs for content script injection
-- Implements a custom event system for communication
-- Utilizes localStorage for data persistence
-- Employs MutationObserver for dynamic content monitoring
-- Uses modern JavaScript features (async/await, ES modules)
+1. Navigate to any ChatGPT conversation
+2. Hover over the conversation in the sidebar
+3. Click the pin icon to pin/unpin the conversation
+4. Pinned conversations will appear at the top of the sidebar
+5. Click on a pinned conversation to navigate to it
 
 ## Development
 
-### Prerequisites
-- Chrome browser
-- Basic understanding of Chrome extension development
-- JavaScript knowledge
+### Project Structure
 
-### Setup
-1. Clone the repository
-2. Install dependencies (if any)
-3. Load the extension in Chrome
-4. Make changes and test in the browser
+```
+extension/
+├── manifest.json
+├── images/
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+├── styles/
+│   └── style.css
+└── scripts/
+    ├── config.js
+    ├── content.js
+    ├── content-loader.js
+    └── services/
+        ├── ChatHistoryUI.js
+        ├── ChatHistoryStorage.js
+        ├── URLTracker.js
+        ├── EventManager.js
+        ├── DOMUtils.js
+        └── errors.js
+```
 
-### Building
-The extension is built using vanilla JavaScript and doesn't require a build process. However, you may want to:
-1. Minify the JavaScript files
-2. Optimize the CSS
-3. Package the extension for distribution
+### Key Components
+
+1. **manifest.json**
+    - Extension configuration
+    - Permissions and content scripts
+    - Resource declarations
+    - Icon definitions
+
+2. **images/**
+    - Extension icons in different sizes
+    - Used for Chrome Web Store and browser UI
+    - Supports multiple resolutions (16x16, 48x48, 128x128)
+
+3. **content.js**
+    - Main extension logic
+    - Service initialization
+    - Event handling
+
+4. **services/**
+    - Modular service classes
+    - Separation of concerns
+    - Reusable utilities
+
+### Best Practices
+
+- Use `EventManager` for custom events
+- Implement proper error handling with custom error classes
+- Use `DOMUtils` for DOM operations
+- Follow the established configuration patterns
+- Maintain clean separation of concerns
 
 ## Contributing
 
@@ -116,6 +157,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Support
 
 For support, please:
+
 1. Check the existing issues
 2. Create a new issue if needed
 3. Provide detailed information about the problem
@@ -131,10 +173,10 @@ For support, please:
 ## Version History
 
 - v1.0.0
-  - Initial release
-  - Basic pin/unpin functionality
-  - Persistent storage
-  - UI integration with ChatGPT
+    - Initial release
+    - Basic pin/unpin functionality
+    - Persistent storage
+    - UI integration with ChatGPT
 
 ## Security
 
