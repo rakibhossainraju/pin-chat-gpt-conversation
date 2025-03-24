@@ -1,3 +1,6 @@
+import CONFIG from "../config.js";
+import { StorageError, ValidationError } from "./errors.js";
+
 /**
  * Class responsible for managing pinned conversations in local storage
  */
@@ -12,65 +15,126 @@ export class ChatHistoryStorage {
 
   /**
    * Loads pinned conversations from localStorage
-   * @returns {Object} An object containing pinned conversations with conversation IDs as keys and titles as values
-   * @private
+   * @returns {Object} An object containing pinned conversations
+   * @throws {StorageError} If there's an error accessing localStorage
    */
   loadPinnedConversations() {
-    return JSON.parse(localStorage.getItem("pinnedConversations")) ?? {};
+    try {
+      const data = localStorage.getItem(CONFIG.STORAGE.PINNED_CONVERSATIONS);
+      return data ? JSON.parse(data) : {};
+    } catch (error) {
+      throw new StorageError(CONFIG.ERRORS.STORAGE_ERROR, {
+        originalError: error,
+      });
+    }
   }
 
   /**
-   * Saves the current pinned conversations to localStorage
+   * Saves pinned conversations to localStorage
+   * @throws {StorageError} If there's an error saving to localStorage
    */
   savePinnedConversations() {
-    localStorage.setItem(
-      "pinnedConversations",
-      JSON.stringify(this.pinnedConversations),
-    );
+    try {
+      localStorage.setItem(
+        CONFIG.STORAGE.PINNED_CONVERSATIONS,
+        JSON.stringify(this.pinnedConversations),
+      );
+    } catch (error) {
+      throw new StorageError(CONFIG.ERRORS.STORAGE_ERROR, {
+        originalError: error,
+      });
+    }
+  }
+
+  /**
+   * Validates conversation data
+   * @param {string} conversationId - The conversation ID
+   * @param {string} title - The conversation title
+   * @throws {ValidationError} If the data is invalid
+   */
+  validateConversationData(conversationId, title) {
+    if (!conversationId || typeof conversationId !== "string") {
+      throw new ValidationError("Invalid conversation ID");
+    }
+    if (!title || typeof title !== "string") {
+      throw new ValidationError("Invalid conversation title");
+    }
+    if (this.isConversationPinned(conversationId)) {
+      throw new ValidationError("Conversation is already pinned");
+    }
   }
 
   /**
    * Pins a conversation with the given ID and title
-   * @param {string} conversationId - The unique identifier of the conversation to pin
-   * @param {string} title - The title of the conversation to pin
-   * @returns {boolean} True if the conversation was successfully pinned, false otherwise
+   * @param {string} conversationId - The unique identifier of the conversation
+   * @param {string} title - The title of the conversation
+   * @returns {boolean} True if the conversation was successfully pinned
+   * @throws {ValidationError} If the conversation data is invalid
+   * @throws {StorageError} If there's an error saving to storage
    */
   pinConversation(conversationId, title) {
-    if (!conversationId || !title || this.isConversationPinned(conversationId))
-      return false;
-    this.pinnedConversations[conversationId] = title;
-    this.savePinnedConversations();
-    return true;
+    try {
+      this.validateConversationData(conversationId, title);
+      this.pinnedConversations[conversationId] = title;
+      this.savePinnedConversations();
+      return true;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      throw new StorageError(CONFIG.ERRORS.STORAGE_ERROR, {
+        originalError: error,
+      });
+    }
   }
 
   /**
    * Unpins a conversation with the given ID
-   * @param {string} conversationId - The unique identifier of the conversation to unpin
-   * @returns {boolean} True if the conversation was successfully unpinned, false otherwise
+   * @param {string} conversationId - The unique identifier of the conversation
+   * @returns {boolean} True if the conversation was successfully unpinned
+   * @throws {ValidationError} If the conversation ID is invalid or not pinned
+   * @throws {StorageError} If there's an error saving to storage
    */
   unpinConversation(conversationId) {
-    if (!conversationId || !this.isConversationPinned(conversationId)) {
-      return false;
+    try {
+      if (!conversationId || typeof conversationId !== "string") {
+        throw new ValidationError("Invalid conversation ID");
+      }
+      if (!this.isConversationPinned(conversationId)) {
+        throw new ValidationError("Conversation is not pinned");
+      }
+
+      delete this.pinnedConversations[conversationId];
+      this.savePinnedConversations();
+      return true;
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      throw new StorageError(CONFIG.ERRORS.STORAGE_ERROR, {
+        originalError: error,
+      });
     }
-    delete this.pinnedConversations[conversationId];
-    this.savePinnedConversations();
-    return true;
   }
 
   /**
    * Retrieves all pinned conversations
-   * @returns {Object} An object containing all pinned conversations with conversation IDs as keys and titles as values
+   * @returns {Object} An object containing all pinned conversations
    */
   getPinnedConversations() {
-    return this.pinnedConversations;
+    return { ...this.pinnedConversations };
   }
 
   /**
    * Checks if a conversation is currently pinned
-   * @param {string} conversationId - The unique identifier of the conversation to check
-   * @returns {boolean} True if the conversation is pinned, false otherwise
+   * @param {string} conversationId - The unique identifier of the conversation
+   * @returns {boolean} True if the conversation is pinned
+   * @throws {ValidationError} If the conversation ID is invalid
    */
   isConversationPinned(conversationId) {
+    if (!conversationId || typeof conversationId !== "string") {
+      throw new ValidationError("Invalid conversation ID");
+    }
     return conversationId in this.pinnedConversations;
   }
 }
