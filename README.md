@@ -188,4 +188,14 @@ For support, please:
 ## Browser Support
 
 - Chrome (primary)
-- Other Chromium-based browsers (may work with modifications) 
+- Other Chromium-based browsers (may work with modifications)
+- 
+## Instolation 
+1. Go to your chrome extension managment settings
+![image](https://github.com/user-attachments/assets/7889aeb6-84f1-4a50-befd-6466dc216005)
+2. Trun on  the developer mode at the right corner
+![image](https://github.com/user-attachments/assets/9d05706e-fa2c-4390-b3d5-f14093cb210d)
+3. From the top left cornerchose **Load Unpacked** and upload the file
+![image](https://github.com/user-attachments/assets/ac97102a-d9ed-46ff-a6cd-7d18032e4250)
+4. You are good to go
+![image](https://github.com/user-attachments/assets/c080f741-2f59-4ac5-8fb4-34891ae04a50)
