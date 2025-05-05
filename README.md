@@ -18,13 +18,21 @@ A Chrome extension that allows you to pin important ChatGPT conversations for qu
    ```sh
    git clone https://github.com/rakibhossainraju/pin-chat-gpt-conversation
    ```
+
 2. Open Chrome and go to `chrome://extensions/`
+
    ![Chrome Extensions Page](https://github.com/user-attachments/assets/7889aeb6-84f1-4a50-befd-6466dc216005)
+
 3. Enable "Developer mode" in the top-right corner
+
    ![Developer Mode Toggle](https://github.com/user-attachments/assets/9d05706e-fa2c-4390-b3d5-f14093cb210d)
+
 4. Click "Load unpacked" and select the extension directory
+
    ![Load Unpacked Button](https://github.com/user-attachments/assets/ac97102a-d9ed-46ff-a6cd-7d18032e4250)
+
 5. The extension is now installed and ready to use
+
    ![Extension Installed](https://github.com/user-attachments/assets/c080f741-2f59-4ac5-8fb4-34891ae04a50)
 
 ## Architecture
