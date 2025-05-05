@@ -27,7 +27,7 @@ A Chrome extension that allows you to pin important ChatGPT conversations for qu
 
    ![Developer Mode Toggle](https://github.com/user-attachments/assets/9d05706e-fa2c-4390-b3d5-f14093cb210d)
 
-4. Click "Load unpacked" and select the extension directory
+4. Click "Load unpacked" and select the cloned extension directory
 
    ![Load Unpacked Button](https://github.com/user-attachments/assets/ac97102a-d9ed-46ff-a6cd-7d18032e4250)
 
