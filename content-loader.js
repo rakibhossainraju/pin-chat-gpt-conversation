@@ -12,8 +12,9 @@
  */
 (async () => {
   try {
-    const src = chrome.runtime.getURL("scripts/content.js");
-    const contentMain = await import(src);
+    // const src = chrome.runtime.getURL("scripts/content.js");
+    // const contentMain = await import(src);
+    const contentMain = await import("scripts/content.js");
     contentMain.main();
   } catch (e) {
     console.error("Could not start the script", e);
