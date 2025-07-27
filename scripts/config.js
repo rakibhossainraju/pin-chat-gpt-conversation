@@ -8,10 +8,10 @@ const CONFIG = {
   SELECTORS: Object.freeze({
     CHAT_CONTAINER:
       ".flex-col.flex-1.transition-opacity.duration-500.relative.overflow-y-auto",
-    HISTORY_ITEM: "li[data-testid^='history']",
-    SIDEBAR_PANEL: ".flex.flex-col.gap-2.text-token-text-primary.text-sm.false",
+    SIDEBAR_PANEL: "#history>aside",
+    HISTORY_ITEM: "a.group.__menu-item.hoverable",
     PINNED_LIST: "#pinned-conversations-list",
-    CONVERSATION_LINK: "a[href]",
+    // CONVERSATION_LINK: "a[href]",
   }),
 
   // CSS Classes
