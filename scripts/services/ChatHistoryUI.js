@@ -20,6 +20,7 @@ class ChatHistoryUI {
     this.eventManager = new EventManager();
     this.urlTracker = null;
     this.chatContainer = null;
+    this.sidebarPanel = null;
     this.templateHistoryItem = null;
     this.init();
   }
@@ -34,7 +35,7 @@ class ChatHistoryUI {
       await DOMUtils.createAndAppendPinButtonStyles();
       await this.createPinnedSection();
       this.setupEventListeners();
-      this.setUpURLTracker();
+      // this.setUpURLTracker();
       this.loadPinnedConversations();
     } catch (error) {
       console.error("Failed to initialize ChatHistoryUI:", error);
@@ -50,10 +51,7 @@ class ChatHistoryUI {
       this.chatContainer = await DOMUtils.waitForElement(
         CONFIG.SELECTORS.CHAT_CONTAINER,
       );
-      this.templateHistoryItem = await DOMUtils.waitForElement(
-        CONFIG.SELECTORS.HISTORY_ITEM,
-      );
-      this.templateHistoryItem.firstElementChild.style = null;
+      this.templateHistoryItem = await DOMUtils.createTemplateHistoryItem();
       this.templateHistoryItem = DOMUtils.cloneElement(
         this.templateHistoryItem,
       );
@@ -90,28 +88,25 @@ class ChatHistoryUI {
    * @private
    */
   async createPinnedSection() {
-    let sidebarPanel = this.chatContainer.querySelector(
+    this.sidebarPanel = this.chatContainer.querySelector(
       CONFIG.SELECTORS.SIDEBAR_PANEL,
     );
-    if (!sidebarPanel) {
+    if (!this.sidebarPanel) {
+      this.sidebarPanel = await DOMUtils.waitForElement(
+        CONFIG.SELECTORS.SIDEBAR_PANEL,
+      );
       this.chatContainer = await DOMUtils.waitForElement(
         CONFIG.SELECTORS.CHAT_CONTAINER,
       );
-      sidebarPanel = await DOMUtils.waitForElement(
-        CONFIG.SELECTORS.SIDEBAR_PANEL,
-      );
-      if (!sidebarPanel) {
+      if (!this.sidebarPanel) {
         throw new DOMError("Sidebar panel not found");
       }
-      console.log("Trying section time to create pin");
     }
 
-    const pinnedSection = DOMUtils.createSection({
-      title: CONFIG.UI.PINNED_SECTION_TITLE,
-      id: CONFIG.SELECTORS.PINNED_LIST.slice(1),
-    });
+    const pinnedSection = DOMUtils.createPinnedSection();
 
-    sidebarPanel.firstElementChild.prepend(pinnedSection);
+    this.sidebarPanel.prepend(pinnedSection);
+    return Promise.resolve(this.sidebarPanel);
   }
 
   /**
@@ -182,32 +177,28 @@ class ChatHistoryUI {
     conversationId,
     isActiveConversation = false,
   }) {
-    const pinnedList = this.chatContainer.querySelector(
-      CONFIG.SELECTORS.PINNED_LIST,
-    );
     const conversationItem = DOMUtils.cloneElement(this.templateHistoryItem);
-    const conversationLink = conversationItem.querySelector("a");
-    const conversationText = conversationLink.querySelector("div[title]");
-    if (isActiveConversation) {
-      conversationItem.firstChild.classList.add(CONFIG.CLASSES.ACTIVE);
-    }
+    const conversationText = conversationItem.querySelector("span.item-title");
+    // if (isActiveConversation) {
+    //   conversationItem.firstChild.classList.add(CONFIG.CLASSES.ACTIVE);
+    // }
     conversationText.setAttribute("title", title);
     conversationText.innerHTML = title;
 
-    conversationLink.removeAttribute("href");
-    conversationLink.setAttribute("chatLink", conversationId);
-    conversationLink.setAttribute("data-processed", "true");
-    conversationLink.setAttribute("data-discover", "true");
-    conversationLink.addEventListener("click", this.handleNavigation);
+    conversationItem.removeAttribute("href");
+    conversationItem.setAttribute("chatLink", conversationId);
+    conversationItem.setAttribute("data-processed", "true");
+    conversationItem.setAttribute("data-discover", "true");
+    conversationItem.addEventListener("click", this.handleNavigation);
 
-    conversationItem.appendChild(
-      this.createUnpinButton({
-        title,
-        conversationId,
-      }),
-    );
+    // conversationItem.appendChild(
+    //   this.createUnpinButton({
+    //     title,
+    //     conversationId,
+    //   }),
+    // );
 
-    pinnedList.appendChild(conversationItem);
+    this.sidebarPanel.appendChild(conversationItem);
   }
 
   /**
@@ -216,6 +207,11 @@ class ChatHistoryUI {
    * @private
    */
   handleConversationHover = ({ target }) => {
+    chrome.runtime.sendMessage({
+      type: "FROM_CONTENT",
+      payload: { message: "Hey popup, something happened!" },
+    });
+    console.log("MESSAGE SENT");
     if (!this.isValidConversationTarget(target)) return;
 
     const conversationId = target.getAttribute("href");
@@ -388,7 +384,7 @@ class ChatHistoryUI {
     const conversationId = conversationLink.attributes.chatLink.value;
 
     const allConversationLinks = this.chatContainer.querySelectorAll(
-      CONFIG.SELECTORS.CONVERSATION_LINK,
+      CONFIG.SELECTORS.HISTORY_ITEM,
     );
     const originalConversation = Array.from(allConversationLinks).find(
       (link) => link.getAttribute("href") === conversationId,
