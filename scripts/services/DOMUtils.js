@@ -50,30 +50,32 @@ class DOMUtils {
    * @param {string} config.id - Section ID
    * @returns {HTMLElement} The created section
    */
-  static createSection({ title, id }) {
-    const section = this.createElement("div");
+  static createPinnedSection() {
+    const section = this.createElement("section");
     section.className = "relative mt-5 first:mt-0 last:mb-5";
-
-    const header = this.createElement("div");
-    header.className = "sticky bg-token-sidebar-surface-primary top-0 z-20";
-
-    const titleSpan = this.createElement("span");
-    titleSpan.className = "flex h-9 items-center";
-
-    const titleElement = this.createElement("h3");
-    titleElement.className =
-      "px-2 text-xs font-semibold text-ellipsis overflow-hidden break-all pt-3 pb-2 text-token-text-primary";
-    titleElement.textContent = title;
-
-    const content = this.createElement("ol");
-    content.id = id;
-
-    titleSpan.appendChild(titleElement);
-    header.appendChild(titleSpan);
-    section.appendChild(header);
-    section.appendChild(content);
+    section.innerHTML = `
+    <h3 class="px-2 text-xs font-semibold text-ellipsis overflow-hidden break-all pt-3 pb-2 text-token-text-primary">${CONFIG.UI.PINNED_SECTION_TITLE}</h3>
+    <div id=${CONFIG.SELECTORS.PINNED_LIST.slice(1)}></div>
+    `;
 
     return section;
+  }
+
+  static async createTemplateHistoryItem() {
+    const a = this.createElement("a");
+    a.className = "group __menu-item hoverable";
+    a.href = "#";
+    a.draggable = false;
+    a["data-discover"] = false;
+    a["data-fill"] = false;
+    a.innerHTML = `
+      <div class="flex min-w-0 grow items-center gap-2.5">
+        <div class="truncate">
+          <span class="item-title" dir="auto">Place Holder Text</span>
+        </div>
+      </div>
+    `;
+    return a;
   }
 
   /**
@@ -84,6 +86,7 @@ class DOMUtils {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.type = "text/css";
+    link.id = "pin-button-styles";
     link.href = chrome.runtime.getURL("styles/style.css");
     document.head.appendChild(link);
     return link;
